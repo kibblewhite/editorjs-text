@@ -1,0 +1,37 @@
+{
+  "name": "editorjs-text",
+  "private": true,
+  "version": "1.0.1",
+  "type": "module",
+  "description": "Single line text block for Editor.js",
+  "license": "MIT",
+  "keywords": [
+    "editorjs-text"
+  ],
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/text.umd.js",
+  "module": "./dist/text.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/text.mjs",
+      "require": "./dist/text.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": {
+    "name": "kibblewhite",
+    "email": "kibblewhite@live.com"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "vite-plugin-css-injected-by-js": "^3.3.0"
+  },
+  "dependencies": {
+    "@codexteam/icons": "^0.3.0"
+  }
+}
