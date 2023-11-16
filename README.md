@@ -36,6 +36,22 @@ If you get this during the `npm run build`:
 
 Please ensure you have performed the npm install commands earlier in this document.
 
+---
+
+```
+file://.../editorjs-text/node_modules/vite/bin/vite.js:7
+    await import('source-map-support').then((r) => r.default.install())
+    ^^^^^
+
+SyntaxError: Unexpected reserved word
+    at Loader.moduleStrategy (internal/modules/esm/translators.js:133:18)
+    at async link (internal/modules/esm/module_job.js:42:21)
+```
+
+During the npm install, you may have an older version of node/npm/nvm.
+
+Please go through the update process successfully and then try again.
+
 
 ### Console Errors in the Browser
 
