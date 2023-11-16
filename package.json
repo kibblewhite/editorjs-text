@@ -1,6 +1,5 @@
 {
   "name": "editorjs-text",
-  "private": true,
   "version": "1.0.1",
   "type": "module",
   "description": "Single line text block for Editor.js",
