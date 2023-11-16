@@ -24,6 +24,12 @@ npm run build
 Open `dist\index.html` in a local browser.
 
 
+## Include as JS
+
+```
+https://cdn.jsdelivr.net/gh/kibblewhite/editorjs-text@latest/dist/text.iife.js
+```
+
 ## Issues
 
 ### Vite
