@@ -10,7 +10,7 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/text.iife.js",
+  "main": "./dist/text.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build"
