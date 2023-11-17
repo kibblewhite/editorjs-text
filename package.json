@@ -1,6 +1,6 @@
 {
   "name": "editorjs-text",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "description": "Single line text block for Editor.js",
   "license": "MIT",
