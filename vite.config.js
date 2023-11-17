@@ -12,7 +12,7 @@ export default {
     lib: {
       entry: path.resolve(__dirname, "src", "text.js"),
       formats: [ "iife" ],
-      fileName: (format) => `text.min.js`,
+      fileName: (format) => `text.js`,
       name: "Text"
     }
 
