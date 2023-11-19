@@ -20,7 +20,7 @@
       return "";
     }
     static get VERSION() {
-      return "1.0.9";
+      return "1.0.1";
     }
     constructor({ data, config, api, readOnly }) {
       this.api = api;
