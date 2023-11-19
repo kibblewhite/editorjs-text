@@ -17,7 +17,7 @@ class Text {
     return "";
   }
   static get VERSION() {
-    return "1.0.0";
+    return "1.0.1";
   }
   constructor({ data, config, api, readOnly }) {
     this.api = api;
