@@ -55,7 +55,8 @@ var editor = CodexEditor({
             placeholder: '...',
             preserveBlank: false,
             allowEnterKeyDown: false,
-            hidePopoverItem: true
+            hidePopoverItem: true,
+            hideToolbar: true
         }
     },
   },
@@ -76,7 +77,8 @@ https://cdn.jsdelivr.net/npm/editorjs-text/dist/text.min.js
 | placeholder        | `string`  | The placeholder. Will be shown only in the first text entry when the editor is empty.  |
 | preserveBlank      | `boolean` | (default: `false`) Whether or not to keep blank paragraphs when saving editor data |
 | allowEnterKeyDown  | `boolean` | (default: `false`) Whether or not to capture when the enter key or shift+enter key is pressed |
-| hidePopoverItem    | `boolean` | (default: `false`) Whether or not to display the text toolbar within the edit toolbox (remember there is a difference between the toolbar and toolbox) |
+| hidePopoverItem    | `boolean` | (default: `false`) Whether or not to display the toolbar's text popover item within the edit toolbox (remember there is a difference between the toolbar and toolbox) |
+| hideToolbar        | `boolean` | (default: `false`) Whether or not to display the text toolbar (note: this will affect all other toolbar items in that editor) |
 
 ## Output data
 

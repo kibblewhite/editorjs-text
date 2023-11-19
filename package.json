@@ -1,6 +1,6 @@
 {
   "name": "editorjs-text",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "type": "module",
   "description": "Single line text block for Editor.js",
   "license": "MIT",
@@ -10,7 +10,14 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/text.js",
+  "main": "./dist/text.umd.js",
+  "module": "./dist/text.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/text.mjs",
+      "require": "./dist/text.umd.js"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build"

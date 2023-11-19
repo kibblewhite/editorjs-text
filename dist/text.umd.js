@@ -10,15 +10,17 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-var Text = function() {
+(function(global, factory) {
+  typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Text = factory());
+})(this, function() {
   "use strict";
   const C1 = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 9V7.2C8 7.08954 8.08954 7 8.2 7L12 7M16 9V7.2C16 7.08954 15.9105 7 15.8 7L12 7M12 7L12 17M12 17H10M12 17H14"/></svg>';
-  class Text2 {
+  class Text {
     static get DEFAULT_PLACEHOLDER() {
       return "";
     }
     static get VERSION() {
-      return "1.0.8";
+      return "1.0.9";
     }
     constructor({ data, config, api, readOnly }) {
       this.api = api;
@@ -32,12 +34,13 @@ var Text = function() {
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
       }
-      this._placeholder = config.placeholder ? config.placeholder : Text2.DEFAULT_PLACEHOLDER;
+      this._placeholder = config.placeholder ? config.placeholder : Text.DEFAULT_PLACEHOLDER;
       this._data = {};
       this._element = null;
       this._preserveBlank = config.preserveBlank !== void 0 ? config.preserveBlank : false;
       this._allowEnterKeyDown = config.allowEnterKeyDown !== void 0 ? config.allowEnterKeyDown : false;
       this._hidePopoverItem = config.hidePopoverItem !== void 0 ? config.hidePopoverItem : false;
+      this._hideToolbar = config.hideToolbar !== void 0 ? config.hideToolbar : false;
       this.data = data;
     }
     static get toolbox() {
@@ -65,12 +68,6 @@ var Text = function() {
         return false;
       }
     }
-    /**
-     * Create Tool's view
-     *
-     * @returns {HTMLElement}
-     * @private
-     */
     drawView() {
       const div = document.createElement("DIV");
       div.classList.add(this._CSS.wrapper, this._CSS.block);
@@ -85,19 +82,25 @@ var Text = function() {
         div.addEventListener("keydown", this.onKeyDown);
       }
       if (this._hidePopoverItem === true) {
-        const codex_editor_mutation_observer = new MutationObserver(() => {
-          let popover_element = this.holder.querySelector('.ce-popover-item[data-item-name="text"]');
-          if (popover_element !== null && typeof popover_element !== "undefined") {
-            let computed_popover_element_style = window.getComputedStyle(popover_element);
-            if (computed_popover_element_style.display !== "none") {
-              popover_element.style.display = "none";
-              codex_editor_mutation_observer.disconnect();
-            }
-          }
-        });
-        codex_editor_mutation_observer.observe(this.holder, { childList: true, subtree: true, attributes: true });
+        this._hide_element_on_mutation('.ce-popover-item[data-item-name="text"]');
+      }
+      if (this._hideToolbar === true) {
+        this._hide_element_on_mutation(".ce-toolbar");
       }
       return div;
+    }
+    _hide_element_on_mutation(selectors) {
+      var codex_editor_mutation_observer = new MutationObserver(() => {
+        let tool_element = this.holder.querySelector(selectors);
+        if (tool_element !== null && typeof tool_element !== "undefined") {
+          let computed_tool_element_style = window.getComputedStyle(tool_element);
+          if (computed_tool_element_style.display !== "none") {
+            tool_element.style.display = "none";
+            codex_editor_mutation_observer.disconnect();
+          }
+        }
+      });
+      codex_editor_mutation_observer.observe(this.holder, { childList: true, subtree: true, attributes: true });
     }
     render() {
       this._element = this.drawView();
@@ -233,5 +236,5 @@ var Text = function() {
       return false;
     }
   }
-  return Text2;
-}();
+  return Text;
+});

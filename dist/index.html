@@ -1,23 +1,31 @@
 <!doctype html>
 <html lang="en-GB">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>editorjs-text</title>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+    <style>
+      .editor-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        border: thin dashed grey;
+        padding: 20px;
+      }
+    </style>
   </head>
   <body>
 
-    <div id="editorjs" style="max-width: 1000px; margin: 0 auto; border: thin dashed grey;"></div>
+    <div id="editorjs" class="editor-container"></div>
 
-      <br /><br />
+    <br />
 
-    <div id="editorjs2" style="max-width: 1000px; margin: 0 auto; border: thin dashed grey;"></div>
+    <div id="editorjs2" class="editor-container"></div>
 
     <button id="save-button">Save</button>
     <pre id="output"></pre>
 
-    <script src="text.js"></script>
+    <script type="text/javascript" src="text.js"></script>
     <script>
 
       /**
@@ -36,7 +44,8 @@
               placeholder: '...',
               preserveBlank: false,
               allowEnterKeyDown: false,
-              hidePopoverItem: true
+              hidePopoverItem: true,
+              hideToolbar: true
             }
           }
         },

@@ -9,8 +9,21 @@ export default {
   build: {
     lib: {
       entry: path.resolve(__dirname, "src", "text.js"),
-      formats: [ "iife" ],
-      fileName: (format) => `text.${format === 'iife' ? 'js' : format + '.js'}`,
+      formats: [ "cjs", "umd", "es", "iife" ],
+      fileName: (format, chunk) => {
+        switch(format) {
+          case 'iife':
+            return 'bundle.js';
+          case 'es':
+            return 'text.mjs';
+          case 'umd':
+            return 'text.umd.js';
+          case 'cjs':
+            return 'text.cjs';
+          default:
+            return null;
+        }
+      },
       name: "Text",
     },
     minify: false,
