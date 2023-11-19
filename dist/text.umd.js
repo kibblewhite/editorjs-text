@@ -10,10 +10,12 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-var Text = function() {
+(function(global, factory) {
+  typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Text = factory());
+})(this, function() {
   "use strict";
   const C1 = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 9V7.2C8 7.08954 8.08954 7 8.2 7L12 7M16 9V7.2C16 7.08954 15.9105 7 15.8 7L12 7M12 7L12 17M12 17H10M12 17H14"/></svg>';
-  class Text2 {
+  class Text {
     /**
      * Default placeholder for Text Tool
      *
@@ -35,7 +37,7 @@ var Text = function() {
         this.onKeyUp = this.onKeyUp.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
       }
-      this._placeholder = config.placeholder ? config.placeholder : Text2.DEFAULT_PLACEHOLDER;
+      this._placeholder = config.placeholder ? config.placeholder : Text.DEFAULT_PLACEHOLDER;
       this._data = {};
       this._element = null;
       this._preserveBlank = config.preserveBlank !== void 0 ? config.preserveBlank : false;
@@ -233,5 +235,5 @@ var Text = function() {
       return false;
     }
   }
-  return Text2;
-}();
+  return Text;
+});

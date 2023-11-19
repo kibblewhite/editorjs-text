@@ -6,23 +6,21 @@ const NODE_ENV = process.argv.mode || "development";
 const VERSION = pkg.version;
 
 export default {
-
   build: {
-
     lib: {
       entry: path.resolve(__dirname, "src", "text.js"),
-      formats: [ "iife" ],
-      fileName: (format) => `text.js`,
-      name: "Text"
-    }
-
+      formats: ["umd", "es", "iife"],
+      fileName: (format) => `text.${format === 'es' ? 'mjs' : (format === 'iife' ? 'js' : format + '.js')}`,
+      name: "Text",
+    },
+    minify: false,
+    rollupOptions: {
+      // Add any additional rollup options here
+    },
   },
-
   define: {
     NODE_ENV: JSON.stringify(NODE_ENV),
-    VERSION: JSON.stringify(VERSION)
+    VERSION: JSON.stringify(VERSION),
   },
-
-  plugins: [ cssInjectedByJsPlugin() ]
-
+  plugins: [cssInjectedByJsPlugin()],
 };

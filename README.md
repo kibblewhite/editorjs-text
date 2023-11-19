@@ -23,11 +23,75 @@ npm run build
 
 Open `dist\index.html` in a local browser.
 
+## Usage
 
-## Include as JS
+Add a new Tool to the `tools` property of the CodeX Editor initial config.
+
+```javascript
+var editor = CodexEditor({
+  ...
+  
+  tools: {
+    ...
+    text: Text,
+  },
+  
+  ...
+});
+```
+
+Or init Warning Tool with additional settings
+
+```javascript
+var editor = CodexEditor({
+  ...
+  
+  tools: {
+    ...
+    text: {
+        class: Text,
+        inlineToolbar: true,
+        config: {
+            placeholder: '...',
+            preserveBlank: false,
+            allowEnterKeyDown: false,
+            hidePopoverItem: true
+        }
+    },
+  },
+  
+  ...
+});
+```
+#### Include as JS
 
 ```
-https://cdn.jsdelivr.net/gh/kibblewhite/editorjs-text@latest/dist/text.iife.js
+https://cdn.jsdelivr.net/npm/editorjs-text/dist/text.min.js
+```
+
+## Config Params
+
+| Field              | Type      | Description                       |
+| ------------------ | --------- | ----------------------------------|
+| placeholder        | `string`  | The placeholder. Will be shown only in the first text entry when the editor is empty.  |
+| preserveBlank      | `boolean` | (default: `false`) Whether or not to keep blank paragraphs when saving editor data |
+| allowEnterKeyDown  | `boolean` | (default: `false`) Whether or not to capture when the enter key or shift+enter key is pressed |
+| hidePopoverItem    | `boolean` | (default: `false`) Whether or not to display the text toolbar within the edit toolbox (remember there is a difference between the toolbar and toolbox) |
+
+## Output data
+
+| Field  | Type     | Description      |
+| ------ | -------- | ---------------- |
+| text   | `string` | html text output without line breaks or new lines |
+
+
+```json
+{
+    "type" : "text",
+    "data" : {
+        "text" : "Check out our projects on a <a href=\"https://github.com/codex-team\">GitHub page</a>.",
+    }
+}
 ```
 
 ## Issues
