@@ -19,6 +19,7 @@ export default {
     },
   },
   define: {
+    'process.env.VERSION': JSON.stringify(VERSION),
     NODE_ENV: JSON.stringify(NODE_ENV),
     VERSION: JSON.stringify(VERSION),
   },

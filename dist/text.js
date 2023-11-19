@@ -23,6 +23,9 @@ var Text = function() {
     static get DEFAULT_PLACEHOLDER() {
       return "";
     }
+    static get VERSION() {
+      return "1.0.7";
+    }
     constructor({ data, config, api, readOnly }) {
       this.api = api;
       this.readOnly = readOnly;
@@ -44,6 +47,9 @@ var Text = function() {
       this.data = data;
     }
     static get toolbox() {
+      if (this._hidePopoverItem === true) {
+        return [];
+      }
       return {
         icon: C1,
         title: "Text"

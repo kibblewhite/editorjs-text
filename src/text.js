@@ -14,6 +14,10 @@ export default class Text {
     return '';
   }
 
+  static get VERSION() {
+    return process.env.VERSION;
+  }
+
   constructor({ data, config, api, readOnly }) {
     this.api = api;
     this.readOnly = readOnly;
@@ -46,6 +50,7 @@ export default class Text {
   }
 
   static get toolbox() {
+    if (this._hidePopoverItem === true) { return [ ]; }
     return {
       icon: IconText,
       title: 'Text',

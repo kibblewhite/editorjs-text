@@ -138,3 +138,13 @@ Editor.js is not ready because of TypeError: Cannot set properties of undefined 
 Means you are running the wrong `index.html` please open the correct `dist\index.html` into your local browser from the local file system.
 
 If the `dist\index.html` file is missing, you need to run the `npm run build` command in order to build the html.
+
+### Known Issue
+
+[https://github.com/codex-team/editor.js/discussions/1897#discussioncomment-5503544](https://github.com/codex-team/editor.js/discussions/1897#discussioncomment-5503544)
+
+```
+Paste handling for «paragraph» Tool hasn't been set up because of the error TypeError: this.constructable is not a constructor
+```
+
+Possible solution is to create a blank plug-in that can be used as drop-in replacement for the paragraph plug-in.
