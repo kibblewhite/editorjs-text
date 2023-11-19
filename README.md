@@ -67,7 +67,7 @@ var editor = CodexEditor({
 #### Include as JS
 
 ```
-https://cdn.jsdelivr.net/npm/editorjs-text/dist/text.min.js
+https://cdn.jsdelivr.net/npm/editorjs-text/dist/bundle.min.js
 ```
 
 ## Config Params
