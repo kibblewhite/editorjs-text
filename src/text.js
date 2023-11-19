@@ -4,12 +4,6 @@ import { IconText } from '@codexteam/icons'
 
 export default class Text {
 
-  /**
-   * Default placeholder for Text Tool
-   *
-   * @returns {string}
-   * @class
-   */
   static get DEFAULT_PLACEHOLDER() {
     return '';
   }

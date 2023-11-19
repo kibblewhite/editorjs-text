@@ -9,8 +9,8 @@ export default {
   build: {
     lib: {
       entry: path.resolve(__dirname, "src", "text.js"),
-      formats: ["umd", "es", "iife"],
-      fileName: (format) => `text.${format === 'es' ? 'mjs' : (format === 'iife' ? 'js' : format + '.js')}`,
+      formats: [ "iife" ],
+      fileName: (format) => `text.${format === 'iife' ? 'js' : format + '.js'}`,
       name: "Text",
     },
     minify: false,
