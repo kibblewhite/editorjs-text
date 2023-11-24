@@ -1,6 +1,7 @@
 import path from "path";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import * as pkg from "./package.json";
+import { terser } from 'rollup-plugin-terser';
 
 const NODE_ENV = process.argv.mode || "development";
 const VERSION = pkg.version;
@@ -8,6 +9,7 @@ const VERSION = pkg.version;
 export default {
   build: {
     lib: {
+      name: "Text",
       entry: path.resolve(__dirname, "src", "text.js"),
       formats: [ "cjs", "umd", "es", "iife" ],
       fileName: (format, chunk) => {
@@ -23,13 +25,12 @@ export default {
           default:
             return null;
         }
-      },
-      name: "Text",
+      }
     },
     minify: false,
     rollupOptions: {
-      // Add any additional rollup options here
-    },
+      plugins: [terser()]
+    }
   },
   define: {
     'process.env.VERSION': JSON.stringify(VERSION),

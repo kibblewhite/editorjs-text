@@ -65,11 +65,22 @@ export default class Text {
   }
 
   onKeyDown(e) {
+    // console.debug('e.key', e.key, e);
     if (this._allowEnterKeyDown === false && e.key === 'Enter') {
       e.stopPropagation();
       e.preventDefault();
       return false;
     }
+
+    // if (e.ctrlKey === true && e.key === 'v') {
+    //   // const clipboard_text = navigator.clipboard.readText();
+    //   // const clipboard_update = clipboard_text.replace(/[\n\r]+/g, '');
+    //   // e.clipboardData.setData('text/plain', clipboard_update);
+    //   // console.log('clipboard_text', clipboard_text, clipboard_update);
+    //   e.stopPropagation();
+    //   e.preventDefault();
+    //   return false;
+    // }
   }
 
   drawView() {
