@@ -1,7 +1,7 @@
 import path from "path";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import * as pkg from "./package.json";
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 
 const NODE_ENV = process.argv.mode || "development";
 const VERSION = pkg.version;
