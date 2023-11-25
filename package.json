@@ -2,7 +2,7 @@
   "name": "editorjs-text",
   "version": "1.1.2",
   "type": "module",
-  "description": "Single line text block for Editor.js",
+  "description": "Text-element block for Editor.js",
   "license": "MIT",
   "keywords": [
     "editorjs-text"
@@ -10,12 +10,12 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/text.umd.js",
-  "module": "./dist/text.mjs",
+  "main": "./dist/text-element.umd.js",
+  "module": "./dist/text-element.mjs",
   "exports": {
     ".": {
-      "import": "./dist/text.mjs",
-      "require": "./dist/text.umd.js"
+      "import": "./dist/text-element.mjs",
+      "require": "./dist/text-element.umd.js"
     }
   },
   "scripts": {

@@ -10,7 +10,9 @@
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-var TextElement = function() {
+!function(t, e) {
+  "object" == typeof exports && "undefined" != typeof module ? module.exports = e() : "function" == typeof define && define.amd ? define(e) : (t = "undefined" != typeof globalThis ? globalThis : t || self).TextElement = e();
+}(this, function() {
   "use strict";
   class t {
     static get DefaultPlaceHolder() {
@@ -31,8 +33,8 @@ var TextElement = function() {
     _instantiate_data(t2) {
       this._data = this.normalizeData(t2 || {});
     }
-    constructor({ data: e, config: a, api: i, readOnly: r }) {
-      this.readOnly = r, this.api = i, this.holder = this.api.ui.nodes.wrapper.parentElement, this._instantiate_data(e), this._set_wrap_element(a.wrapElement), this._CSS = { block: this.api.styles.block, wrapper: "ce-text" }, this.readOnly || (this.onKeyUp = this.onKeyUp.bind(this), this.onKeyDown = this.onKeyDown.bind(this)), this._element = null, this._placeholder = a.placeholder ? a.placeholder : t.DefaultPlaceHolder, this._preserveBlank = void 0 !== a.preserveBlank && a.preserveBlank, this._allowEnterKeyDown = void 0 !== a.allowEnterKeyDown && a.allowEnterKeyDown, this._hidePopoverItem = void 0 !== a.hidePopoverItem && a.hidePopoverItem, this._hideToolbar = void 0 !== a.hideToolbar && a.hideToolbar;
+    constructor({ data: e, config: a, api: i, readOnly: n }) {
+      this.readOnly = n, this.api = i, this.holder = this.api.ui.nodes.wrapper.parentElement, this._instantiate_data(e), this._set_wrap_element(a.wrapElement), this._CSS = { block: this.api.styles.block, wrapper: "ce-text" }, this.readOnly || (this.onKeyUp = this.onKeyUp.bind(this), this.onKeyDown = this.onKeyDown.bind(this)), this._element = null, this._placeholder = a.placeholder ? a.placeholder : t.DefaultPlaceHolder, this._preserveBlank = void 0 !== a.preserveBlank && a.preserveBlank, this._allowEnterKeyDown = void 0 !== a.allowEnterKeyDown && a.allowEnterKeyDown, this._hidePopoverItem = void 0 !== a.hidePopoverItem && a.hidePopoverItem, this._hideToolbar = void 0 !== a.hideToolbar && a.hideToolbar;
     }
     static get toolbox() {
       return true === this._hidePopoverItem ? [] : { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 9V7.2C8 7.08954 8.08954 7 8.2 7L12 7M16 9V7.2C16 7.08954 15.9105 7 15.8 7L12 7M12 7L12 17M12 17H10M12 17H14"/></svg>', title: "Text" };
@@ -112,4 +114,4 @@ var TextElement = function() {
     }
   }
   return t;
-}();
+});

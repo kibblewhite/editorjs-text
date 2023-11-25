@@ -9,19 +9,19 @@ const VERSION = pkg.version;
 export default {
   build: {
     lib: {
-      name: "Text",
-      entry: path.resolve(__dirname, "src", "text.js"),
+      name: "TextElement",
+      entry: path.resolve(__dirname, "src", "text-element.js"),
       formats: [ "cjs", "umd", "es", "iife" ],
       fileName: (format, chunk) => {
         switch(format) {
           case 'iife':
             return 'bundle.js';
           case 'es':
-            return 'text.mjs';
+            return 'text-element.mjs';
           case 'umd':
-            return 'text.umd.js';
+            return 'text-element.umd.js';
           case 'cjs':
-            return 'text.cjs';
+            return 'text-element.cjs';
           default:
             return null;
         }

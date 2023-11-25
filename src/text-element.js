@@ -1,21 +1,41 @@
-import './text.css';
+import './text-element.css';
 
 import { IconText } from '@codexteam/icons'
 
-export default class Text {
+export default class TextElement {
 
-  static get DEFAULT_PLACEHOLDER() {
+  static get DefaultPlaceHolder() {
     return '';
   }
 
-  static get VERSION() {
+  static get Version() {
     return process.env.VERSION;
   }
 
+  static get DefaultWrapElement() {
+    return 'text';
+  }
+
+  static get SupportedWrapElementsArray() {
+    return [ 'text', 'custom', 'title', 'synopsis' ];
+  }
+
+  _set_wrap_element(wrap_element) {
+    this._data.wrap = TextElement.SupportedWrapElementsArray.find(item => item === wrap_element) ?? TextElement.DefaultWrapElement;
+  }
+
+  _instantiate_data(data) {
+    this._data = this.normalizeData(data || {});
+  }
+
   constructor({ data, config, api, readOnly }) {
-    this.api = api;
+
     this.readOnly = readOnly;
+    this.api = api;
     this.holder = this.api.ui.nodes.wrapper.parentElement;
+
+    this._instantiate_data(data);
+    this._set_wrap_element(config.wrapElement);
 
     this._CSS = {
       block: this.api.styles.block,
@@ -27,21 +47,13 @@ export default class Text {
       this.onKeyDown = this.onKeyDown.bind(this);
     }
 
-
-    /**
-     * Placeholder for test if it is first Block
-     *
-     * @type {string}
-     */
-    this._placeholder = config.placeholder ? config.placeholder : Text.DEFAULT_PLACEHOLDER;
-    this._data = {};
     this._element = null;
+    this._placeholder = config.placeholder ? config.placeholder : TextElement.DefaultPlaceHolder;
     this._preserveBlank = config.preserveBlank !== undefined ? config.preserveBlank : false;
     this._allowEnterKeyDown = config.allowEnterKeyDown !== undefined ? config.allowEnterKeyDown : false;
     this._hidePopoverItem = config.hidePopoverItem !== undefined ? config.hidePopoverItem : false;
     this._hideToolbar = config.hideToolbar !== undefined ? config.hideToolbar : false;
 
-    this.data = data;
   }
 
   static get toolbox() {
@@ -50,6 +62,17 @@ export default class Text {
       icon: IconText,
       title: 'Text'
     };
+  }
+
+  _currentWrapElement() {
+    const wrap_element = TextElement.SupportedWrapElementsArray.find(item => item.wrap === this._data.wrap).toString() ?? TextElement.DefaultWrapElement;
+    return wrap_element;
+  }
+
+  normalizeData(data) {
+    const text = data && typeof data.text === 'string' ? data.text : '';
+    const wrap = data && data.wrap ? data.wrap : TextElement.DefaultWrapElement;  
+    return { text, wrap };
   }
 
   onKeyUp(e) {
@@ -84,7 +107,7 @@ export default class Text {
   }
 
   drawView() {
-    const div = document.createElement('DIV');
+    const div = document.createElement('div');
 
     div.classList.add(this._CSS.wrapper, this._CSS.block);
 
@@ -141,10 +164,11 @@ export default class Text {
    * @public
    */
   merge(data) {
-    let newData = {
-      text : this.data.text + data.text
+    let merged_data = {
+      text : this._data.text + data.text,
+      wrap: this._data.wrap,
     };
-    this.data = newData;
+    this._data = this.normalizeData(merged_data);
   }
 
   /**
@@ -168,7 +192,8 @@ export default class Text {
    */
   save(toolsContent) {
     return {
-      text: toolsContent.innerHTML
+      text: toolsContent.innerHTML,
+      wrap: this._data.wrap
     };
   }
 
@@ -181,7 +206,7 @@ export default class Text {
     const data = {
       text: event.detail.data.innerHTML
     };
-    this.data = data;
+    this._data = this.normalizeData(data);
   }
 
   /**
@@ -221,23 +246,24 @@ export default class Text {
    * @private
    */
   get data() {
-    if (this._element !== null) {
+    if (this._element !== null && typeof this._element !== 'undefined') {
       const text = this._element.innerHTML;
       this._data.text = text;
     }
-    return this._data;
+    this._data.wrap = this._currentWrapElement();
+    return this.normalizeData(this._data);
   }
 
   /**
    * Store data in plugin:
-   * - at the this._data property
+   * - at the this.data property
    * - at the HTML
    *
    * @param {TestData} data — data to set
    * @private
    */
   set data(data) {
-    this._data = data || {};
+    this._data = this.normalizeData(data);
     if (this._element !== null) {
       this.hydrate();
     }
@@ -260,7 +286,7 @@ export default class Text {
    */
   static get pasteConfig() {
     return {
-      tags: [ 'P' ]
+      tags: [ 'p' ]
     };
   }
 
@@ -273,5 +299,4 @@ export default class Text {
   static get enableLineBreaks() {
     return false;
   }
-
 }

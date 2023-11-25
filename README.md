@@ -1,6 +1,6 @@
 # editorjs-text
 
-A plain text block for editorjs. You can capture the enter key to prevent new lines or line breaks from been created.
+A plain text-element block for editorjs. You can capture the enter key to prevent new lines or line breaks from been created.
 
 ## NPM and Build
 
@@ -33,7 +33,7 @@ var editor = CodexEditor({
   
   tools: {
     ...
-    text: Text,
+    textElement: TextElement,
   },
   
   ...
@@ -48,8 +48,8 @@ var editor = CodexEditor({
   
   tools: {
     ...
-    text: {
-        class: Text,
+    textElement: {
+        class: TextElement,
         inlineToolbar: true,
         config: {
             placeholder: '...',

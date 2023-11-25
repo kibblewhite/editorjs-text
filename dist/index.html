@@ -38,14 +38,15 @@
         tools: {
           paragraph: false,
           text: {
-            class: Text,
+            class: TextElement,
             inlineToolbar: true,
             config: {
               placeholder: '...',
               preserveBlank: false,
               allowEnterKeyDown: false,
               hidePopoverItem: true,
-              hideToolbar: true
+              hideToolbar: true,
+              wrapElement: 'title'
             }
           }
         },
@@ -64,13 +65,14 @@
         tools: {
           paragraph: false,
           text: {
-            class: Text,
+            class: TextElement,
             inlineToolbar: true,
             config: {
               placeholder: '...',
               preserveBlank: false,
               allowEnterKeyDown: false,
-              hidePopoverItem: false
+              hidePopoverItem: false,
+              wrapElement: 'text'
             }
           }
         },
