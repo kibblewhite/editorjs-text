@@ -15,7 +15,7 @@ class t {
     return "";
   }
   static get Version() {
-    return "1.1.2";
+    return "0.1.4";
   }
   static get DefaultWrapElement() {
     return "text";
