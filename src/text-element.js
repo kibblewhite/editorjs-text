@@ -30,16 +30,12 @@ export default class TextElement {
 
   constructor({ data, config, api, readOnly }) {
 
-    this.readOnly = readOnly;
     this.api = api;
-    this.holder = this.api.ui.nodes.wrapper.parentElement;
-
-    this._instantiate_data(data);
-    this._set_wrap_element(config.wrapElement);
+    this.readOnly = readOnly;
 
     this._CSS = {
       block: this.api.styles.block,
-      wrapper: 'ce-text',
+      wrapper: "ce-text"
     };
 
     if (!this.readOnly) {
@@ -47,13 +43,17 @@ export default class TextElement {
       this.onKeyDown = this.onKeyDown.bind(this);
     }
 
-    this._element = null;
     this._placeholder = config.placeholder ? config.placeholder : TextElement.DefaultPlaceHolder;
+    this._data = data ?? {};
+    this._element = null;
+    
     this._preserveBlank = config.preserveBlank !== undefined ? config.preserveBlank : false;
     this._allowEnterKeyDown = config.allowEnterKeyDown !== undefined ? config.allowEnterKeyDown : false;
     this._hidePopoverItem = config.hidePopoverItem !== undefined ? config.hidePopoverItem : false;
     this._hideToolbar = config.hideToolbar !== undefined ? config.hideToolbar : false;
 
+    this._instantiate_data(data);
+    this._set_wrap_element(config.wrapElement);
   }
 
   static get toolbox() {
@@ -71,7 +71,18 @@ export default class TextElement {
 
   normalizeData(data) {
     const text = data && typeof data.text === 'string' ? data.text : '';
-    const wrap = data && data.wrap ? data.wrap : TextElement.DefaultWrapElement;  
+    const wrap = data && data.wrap ? data.wrap : TextElement.DefaultWrapElement;
+
+    // Remove all of the elements with the class `ce-block` except the first/top one from `this.redactor`
+    if (this.redactor) {
+      const blocks = this.redactor.querySelectorAll('.ce-block');
+      if (blocks.length > 1) {
+        for (let i = 1; i < blocks.length; i++) {
+          blocks[i].remove();
+        }
+      }
+    }
+
     return { text, wrap };
   }
 
@@ -124,24 +135,14 @@ export default class TextElement {
       div.addEventListener('keydown', this.onKeyDown);
     }
 
-    // <div class="ce-popover-item" data-item-name="text" />
-    if (this._hidePopoverItem === true) {
-      this._hide_element_on_mutation('.ce-popover-item[data-item-name="text"]');
-    }
-
-    // <div class="ce-toolbar ce-toolbar--opened" />
-    if (this._hideToolbar === true) {
-      this._hide_element_on_mutation('.ce-toolbar');
-    }
-
     return div;
   }
 
   _hide_element_on_mutation(selectors) {
     var codex_editor_mutation_observer = new MutationObserver(() => {
-      let tool_element = this.holder.querySelector(selectors);
+      let tool_element = this.holder?.querySelector(selectors);
         if (tool_element !== null && typeof tool_element !== 'undefined') {
-          let computed_tool_element_style = window.getComputedStyle(tool_element);              
+          let computed_tool_element_style = window.getComputedStyle(tool_element);
           if (computed_tool_element_style.display !== 'none') {
             tool_element.style.display = 'none';
             codex_editor_mutation_observer.disconnect();
@@ -153,6 +154,24 @@ export default class TextElement {
 
   render() {
     this._element = this.drawView();
+
+    setTimeout(() => {
+      // search up through the parent elements to find a div element with the css class of `codex-editor` assigned to it
+      this.holder = this._element.closest('.codex-editor');
+      this.redactor = this.holder?.querySelector('.codex-editor__redactor');
+
+      // <div class="ce-popover-item" data-item-name="text" />
+      if (this._hidePopoverItem === true) {
+        this._hide_element_on_mutation('.ce-popover-item[data-item-name="text"]');
+      }
+
+      // <div class="ce-toolbar ce-toolbar--opened" />
+      if (this._hideToolbar === true) {
+        this._hide_element_on_mutation('.ce-toolbar');
+      }
+
+    }, 1);
+
     return this._element;
   }
 

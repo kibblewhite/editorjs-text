@@ -124,6 +124,30 @@ During the npm install, you may have an older version of node/npm/nvm.
 
 Please go through the update process successfully and then try again.
 
+### Update node and npm where required
+
+```$ npm install vite@latest
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'vite@7.0.0',
+npm WARN EBADENGINE   required: { node: '^20.19.0 || >=22.12.0' },
+npm WARN EBADENGINE   current: { node: 'v18.19.1', npm: '9.2.0' }
+npm WARN EBADENGINE }
+```
+
+As both root and standard user to install nvm into the local home directory
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+
+Logout and back in, to get the correct settings and to beable to start using `nvm`.
+```
+nvm install --lts
+```
+
+Re-run the vite install:
+```
+npm install vite@latest
+```
 
 ### Console Errors in the Browser
 
