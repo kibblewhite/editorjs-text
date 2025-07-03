@@ -1,6 +1,6 @@
 {
   "name": "editorjs-text",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
   "description": "Text-element block for Editor.js",
   "license": "MIT",

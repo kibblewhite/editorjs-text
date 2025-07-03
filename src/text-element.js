@@ -101,9 +101,15 @@ export default class TextElement {
   onKeyDown(e) {
     // console.debug('e.key', e.key, e);
     if (this._allowEnterKeyDown === false && e.key === 'Enter') {
+
+      // Send an event up the chain to notifiy the editor that the Enter key was pressed
+      this.api.events.emit('block:enter', {
+        element: this._element,
+        event: e
+      });
+
       e.stopPropagation();
-      e.preventDefault();
-      return false;
+      return true;
     }
 
     // if (e.ctrlKey === true && e.key === 'v') {
