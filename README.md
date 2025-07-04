@@ -35,7 +35,12 @@ var editor = CodexEditor({
     ...
     textElement: TextElement,
   },
-  
+  onReady: () => {
+    editor.events.on('block:enter', (eventData) => {
+      console.log('Event captured:', eventData);
+    });
+  }
+
   ...
 });
 ```
