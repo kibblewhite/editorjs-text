@@ -187,7 +187,6 @@ export default class TextElement {
         this._hide_element_on_mutation('.ce-toolbar');
       }
 
-      // .. 
       if (this._startMarginZero === true) {
         const content_blocks = this.redactor.querySelectorAll('.ce-block__content');
         for (let i = 0; i < content_blocks.length; i++) {
@@ -195,14 +194,6 @@ export default class TextElement {
           content_block.style.setProperty('max-width', '100%', 'important');
         }
       }
-
-      // const text_blocks = this.redactor.querySelectorAll('.ce-text.cdx-block');
-      // for (let i = 0; i < text_blocks.length; i++) {
-      //   let empty_elements_to_remove = text_blocks[i].querySelectorAll('[data-empty="true"]');
-      //   for (let j = 0; j < empty_elements_to_remove.length; j++) {
-      //     console.log(empty_elements_to_remove);
-      //   }
-      // }
     }, 1);
 
     return this._element;

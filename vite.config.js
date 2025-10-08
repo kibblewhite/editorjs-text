@@ -27,9 +27,12 @@ export default {
         }
       }
     },
-    minify: false,
+    minify: true,
     rollupOptions: {
-      plugins: [terser()]
+      plugins: [terser({
+          keep_classnames: true,  // 🛡️ Prevents class mangling
+          keep_fnames: true       // 🛡️ Prevents function name mangling
+        })]
     }
   },
   define: {
