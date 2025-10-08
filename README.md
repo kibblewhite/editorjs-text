@@ -85,6 +85,7 @@ https://cdn.jsdelivr.net/npm/editorjs-text/dist/bundle.min.js
 | allowEnterKeyDown  | `boolean` | (default: `false`) Whether or not to capture when the enter key or shift+enter key is pressed |
 | hidePopoverItem    | `boolean` | (default: `false`) Whether or not to display the toolbar's text popover item within the edit toolbox (remember there is a difference between the toolbar and toolbox) |
 | hideToolbar        | `boolean` | (default: `false`) Whether or not to display the text toolbar (note: this will affect all other toolbar items in that editor) |
+| startMarginZero    | `boolean` | (default: `false`) The input text field is allowed to use the whole width available to within its parent element |
 
 ## Output data
 
