@@ -4,7 +4,7 @@ class a {
     return "";
   }
   static get Version() {
-    return "0.1.8";
+    return "0.1.10";
   }
   static get DefaultWrapElement() {
     return "text";
@@ -48,11 +48,13 @@ class a {
     return t.classList.add(this._CSS.wrapper, this._CSS.block), t.contentEditable = !1, t.dataset.placeholder = this.api.i18n.t(this._placeholder), this._data.text && (t.innerHTML = this._data.text), this.readOnly || (t.contentEditable = !0, t.addEventListener("keyup", this.onKeyUp), t.addEventListener("keydown", this.onKeyDown)), t;
   }
   _hide_element_on_mutation(t) {
-    var e = new MutationObserver(() => {
-      let r = this.holder?.querySelector(t);
-      r != null && window.getComputedStyle(r).display !== "none" && (r.style.display = "none", e.disconnect());
-    });
-    e.observe(this.holder, { childList: !0, subtree: !0, attributes: !0 });
+    if (this.holder && this.holder instanceof Node) {
+      var e = new MutationObserver(() => {
+        let r = this.holder?.querySelector(t);
+        r != null && window.getComputedStyle(r).display !== "none" && (r.style.display = "none", e.disconnect());
+      });
+      e.observe(this.holder, { childList: !0, subtree: !0, attributes: !0 });
+    } else console.debug("Cannot observe mutations: holder is not a valid DOM Node");
   }
   render() {
     return this._element = this.drawView(), setTimeout(() => {

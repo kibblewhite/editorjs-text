@@ -146,6 +146,11 @@ export default class TextElement {
   }
 
   _hide_element_on_mutation(selectors) {
+    if (!this.holder || !(this.holder instanceof Node)) {
+      console.debug('Cannot observe mutations: holder is not a valid DOM Node');
+      return;
+    }
+
     var codex_editor_mutation_observer = new MutationObserver(() => {
       let tool_element = this.holder?.querySelector(selectors);
         if (tool_element !== null && typeof tool_element !== 'undefined') {
@@ -156,6 +161,7 @@ export default class TextElement {
           }
         }
     });
+
     codex_editor_mutation_observer.observe(this.holder, { childList: true, subtree: true, attributes: true });
   }
 
