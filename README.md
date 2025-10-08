@@ -61,7 +61,8 @@ var editor = CodexEditor({
             preserveBlank: false,
             allowEnterKeyDown: false,
             hidePopoverItem: true,
-            hideToolbar: true
+            hideToolbar: true,
+            startMarginZero: true
         }
     },
   },

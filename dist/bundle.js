@@ -3,21 +3,21 @@
   try {
     if (typeof document != "undefined") {
       var elementStyle = document.createElement("style");
-      elementStyle.appendChild(document.createTextNode('.ce-text {\n  line-height: 1.6em;\n  outline: none;\n}\n\n.ce-text[data-placeholder]:empty::before{\n  content: attr(data-placeholder);\n  color: #707684;\n  font-weight: normal;\n  opacity: 0;\n}\n\n/** Show placeholder at the first text if Editor is empty */\n.codex-editor--empty .ce-block:first-child .ce-text[data-placeholder]:empty::before {\n  opacity: 1;\n}\n\n.codex-editor--toolbox-opened .ce-block:first-child .ce-text[data-placeholder]:empty::before,\n.codex-editor--empty .ce-block:first-child .ce-text[data-placeholder]:empty:focus::before {\n  opacity: 0;\n}\n\n.ce-text p:first-of-type{\n  margin-top: 0;\n}\n\n.ce-text p:last-of-type{\n  margin-bottom: 0;\n}\n\n[contenteditable="true"].ce-text {\n  white-space: nowrap;\n  overflow: hidden;\n}\n\n[contenteditable="true"].ce-text br {\n  display: none;\n}\n\n[contenteditable="true"].ce-text * {\n  display: inline;\n  white-space: nowrap;\n}'));
+      elementStyle.appendChild(document.createTextNode('.ce-text {\n  line-height: 1.6em;\n  outline: none;\n}\n\n.ce-text[data-placeholder]:empty::before{\n  content: attr(data-placeholder);\n  color: #707684;\n  font-weight: normal;\n  opacity: 0;\n}\n\n/** Show placeholder at the first text if Editor is empty */\n.codex-editor--empty .ce-block:first-child .ce-text[data-placeholder]:empty::before {\n  opacity: 1;\n}\n\n.codex-editor--toolbox-opened .ce-block:first-child .ce-text[data-placeholder]:empty::before,\n.codex-editor--empty .ce-block:first-child .ce-text[data-placeholder]:empty:focus::before {\n  opacity: 0;\n}\n\n.ce-text p:first-of-type{\n  margin-top: 0;\n}\n\n.ce-text p:last-of-type{\n  margin-bottom: 0;\n}\n\n[contenteditable="true"].ce-text {\n  white-space: nowrap;\n  overflow: hidden;\n}\n\n[contenteditable="true"].ce-text br {\n  display: none;\n}\n\n[contenteditable="true"].ce-text * {\n  display: inline;\n  white-space: nowrap;\n}\n\n.ce-text.cdx-block {\n  margin-left: var(--block-indent, 0);\n}'));
       document.head.appendChild(elementStyle);
     }
   } catch (e) {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-var TextElement = function() {
+var TextElement = (function() {
   "use strict";
   class t {
     static get DefaultPlaceHolder() {
       return "";
     }
     static get Version() {
-      return "0.1.7";
+      return "0.1.8";
     }
     static get DefaultWrapElement() {
       return "text";
@@ -31,8 +31,8 @@ var TextElement = function() {
     _instantiate_data(t2) {
       this._data = this.normalizeData(t2 || {});
     }
-    constructor({ data: e, config: a, api: i, readOnly: r }) {
-      this.api = i, this.readOnly = r, this._CSS = { block: this.api.styles.block, wrapper: "ce-text" }, this.readOnly || (this.onKeyUp = this.onKeyUp.bind(this), this.onKeyDown = this.onKeyDown.bind(this)), this._placeholder = a.placeholder ? a.placeholder : t.DefaultPlaceHolder, this._data = e ?? {}, this._element = null, this._preserveBlank = void 0 !== a.preserveBlank && a.preserveBlank, this._allowEnterKeyDown = void 0 !== a.allowEnterKeyDown && a.allowEnterKeyDown, this._hidePopoverItem = void 0 !== a.hidePopoverItem && a.hidePopoverItem, this._hideToolbar = void 0 !== a.hideToolbar && a.hideToolbar, this._instantiate_data(e), this._set_wrap_element(a.wrapElement);
+    constructor({ data: e, config: r, api: i, readOnly: a }) {
+      this.api = i, this.readOnly = a, this._CSS = { block: this.api.styles.block, wrapper: "ce-text" }, this.readOnly || (this.onKeyUp = this.onKeyUp.bind(this), this.onKeyDown = this.onKeyDown.bind(this)), this._placeholder = r.placeholder ? r.placeholder : t.DefaultPlaceHolder, this._data = e ?? {}, this._element = null, this._preserveBlank = void 0 !== r.preserveBlank && r.preserveBlank, this._allowEnterKeyDown = void 0 !== r.allowEnterKeyDown && r.allowEnterKeyDown, this._hidePopoverItem = void 0 !== r.hidePopoverItem && r.hidePopoverItem, this._hideToolbar = void 0 !== r.hideToolbar && r.hideToolbar, this._startMarginZero = void 0 !== r.startMarginZero && r.startMarginZero, this._instantiate_data(e), this._set_wrap_element(r.wrapElement);
     }
     static get toolbox() {
       return true === this._hidePopoverItem ? [] : { icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 9V7.2C8 7.08954 8.08954 7 8.2 7L12 7M16 9V7.2C16 7.08954 15.9105 7 15.8 7L12 7M12 7L12 17M12 17H10M12 17H14"/></svg>', title: "Text" };
@@ -41,12 +41,12 @@ var TextElement = function() {
       return t.SupportedWrapElementsArray.find((t2) => t2.wrap === this._data.wrap).toString() ?? t.DefaultWrapElement;
     }
     normalizeData(e) {
-      const a = e && "string" == typeof e.text ? e.text : "", i = e && e.wrap ? e.wrap : t.DefaultWrapElement;
+      const r = e && "string" == typeof e.text ? e.text : "", i = e && e.wrap ? e.wrap : t.DefaultWrapElement;
       if (this.redactor) {
         const t2 = this.redactor.querySelectorAll(".ce-block");
         if (t2.length > 1) for (let e2 = 1; e2 < t2.length; e2++) t2[e2].remove();
       }
-      return { text: a, wrap: i };
+      return { text: r, wrap: i };
     }
     onKeyUp(t2) {
       if ("Backspace" !== t2.code && "Delete" !== t2.code) return;
@@ -62,16 +62,29 @@ var TextElement = function() {
     }
     _hide_element_on_mutation(t2) {
       var e = new MutationObserver(() => {
-        let a = this.holder?.querySelector(t2);
-        if (null != a) {
-          "none" !== window.getComputedStyle(a).display && (a.style.display = "none", e.disconnect());
+        let r = this.holder?.querySelector(t2);
+        if (null != r) {
+          "none" !== window.getComputedStyle(r).display && (r.style.display = "none", e.disconnect());
         }
       });
       e.observe(this.holder, { childList: true, subtree: true, attributes: true });
     }
     render() {
       return this._element = this.drawView(), setTimeout(() => {
-        this.holder = this._element.closest(".codex-editor"), this.redactor = this.holder?.querySelector(".codex-editor__redactor"), true === this._hidePopoverItem && this._hide_element_on_mutation('.ce-popover-item[data-item-name="text"]'), true === this._hideToolbar && this._hide_element_on_mutation(".ce-toolbar");
+        if (this.holder = this._element.closest(".codex-editor"), this.redactor = this.holder?.querySelector(".codex-editor__redactor"), true === this._hidePopoverItem) {
+          this._hide_element_on_mutation('.ce-popover-item[data-item-name="text"]');
+          const t2 = this.redactor.querySelectorAll(".ce-text.cdx-block");
+          for (let e = 1; e < t2.length; e++) {
+            let r = t2[e].closest(".ce-block");
+            r && r.remove();
+          }
+        }
+        if (true === this._hideToolbar && this._hide_element_on_mutation(".ce-toolbar"), true === this._startMarginZero) {
+          const t2 = this.redactor.querySelectorAll(".ce-block__content");
+          for (let e = 0; e < t2.length; e++) {
+            t2[e].style.setProperty("max-width", "100%", "important");
+          }
+        }
       }, 1), this._element;
     }
     merge(t2) {
@@ -117,4 +130,4 @@ var TextElement = function() {
     }
   }
   return t;
-}();
+})();

@@ -41,3 +41,7 @@
   display: inline;
   white-space: nowrap;
 }
+
+.ce-text.cdx-block {
+  margin-left: var(--block-indent, 0);
+}

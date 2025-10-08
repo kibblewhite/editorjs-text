@@ -51,6 +51,7 @@ export default class TextElement {
     this._allowEnterKeyDown = config.allowEnterKeyDown !== undefined ? config.allowEnterKeyDown : false;
     this._hidePopoverItem = config.hidePopoverItem !== undefined ? config.hidePopoverItem : false;
     this._hideToolbar = config.hideToolbar !== undefined ? config.hideToolbar : false;
+    this._startMarginZero = config.startMarginZero !== undefined ? config.startMarginZero : false;
 
     this._instantiate_data(data);
     this._set_wrap_element(config.wrapElement);
@@ -169,6 +170,16 @@ export default class TextElement {
       // <div class="ce-popover-item" data-item-name="text" />
       if (this._hidePopoverItem === true) {
         this._hide_element_on_mutation('.ce-popover-item[data-item-name="text"]');
+
+        // Remove all but the first ce-text cdx-block element
+        const text_blocks = this.redactor.querySelectorAll('.ce-text.cdx-block');
+        for (let i = 1; i < text_blocks.length; i++) {
+          // Remove the entire ce-block parent of the text block
+          let block_to_remove = text_blocks[i].closest('.ce-block');
+          if (block_to_remove) {
+            block_to_remove.remove();
+          }
+        }
       }
 
       // <div class="ce-toolbar ce-toolbar--opened" />
@@ -176,6 +187,22 @@ export default class TextElement {
         this._hide_element_on_mutation('.ce-toolbar');
       }
 
+      // .. 
+      if (this._startMarginZero === true) {
+        const content_blocks = this.redactor.querySelectorAll('.ce-block__content');
+        for (let i = 0; i < content_blocks.length; i++) {
+          let content_block = content_blocks[i];
+          content_block.style.setProperty('max-width', '100%', 'important');
+        }
+      }
+
+      // const text_blocks = this.redactor.querySelectorAll('.ce-text.cdx-block');
+      // for (let i = 0; i < text_blocks.length; i++) {
+      //   let empty_elements_to_remove = text_blocks[i].querySelectorAll('[data-empty="true"]');
+      //   for (let j = 0; j < empty_elements_to_remove.length; j++) {
+      //     console.log(empty_elements_to_remove);
+      //   }
+      // }
     }, 1);
 
     return this._element;
