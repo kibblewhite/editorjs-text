@@ -1,6 +1,7 @@
 .ce-text {
   line-height: 1.6em;
   outline: none;
+  text-align: start;
 }
 
 .ce-text[data-placeholder]:empty::before {
@@ -34,5 +35,5 @@
 }
 
 .ce-text.cdx-block {
-  margin-left: var(--block-indent, 0);
+  margin-inline-start: var(--block-indent, 0);
 }

@@ -57,6 +57,7 @@ export default class TextElement {
     this._hidePopoverItem = config.hidePopoverItem ?? false;
     this._hideToolbar = config.hideToolbar ?? false;
     this._startMarginZero = config.startMarginZero ?? false;
+    this._direction = config.direction ?? 'auto';
 
     this._data = this.normalizeData(data || {});
     this._data.wrap = TextElement.SupportedWrapElementsArray.find(item => item === config.wrapElement) ?? TextElement.DefaultWrapElement;
@@ -146,6 +147,7 @@ export default class TextElement {
     div.classList.add(this._CSS.wrapper, this._CSS.block);
     div.contentEditable = !this.readOnly;
     div.dataset.placeholder = this.api.i18n.t(this._placeholder);
+    div.dir = this._direction;
 
     if (this._data.text) {
       div.innerHTML = this._data.text;

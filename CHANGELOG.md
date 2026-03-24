@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.3 (2026-03-24)
+
+### Features
+
+- **RTL support** — added `direction` config option (defaults to `'auto'`), sets the `dir` attribute on the rendered block element. CSS updated to use logical properties (`margin-inline-start`, `text-align: start`) so layout adapts correctly in RTL contexts
+- **GitHub Pages deployment** — added workflow to publish the demo page on push to `main`
+
+### Demo Page
+
+- Added third editor instance with RTL enabled (`i18n.direction: 'rtl'`)
+- Added "Invoke Insert" and "Invoke Insert Paragraph" buttons for testing block injection
+- Added "Load Data" button to test rendering from a JSON payload, including unsupported and malformed blocks
+- Improved layout with Turret CSS and responsive containers
+
 ## 1.0.2 (2026-03-24)
 
 - Fix `repository.url` format in `package.json` (npm publish warning)

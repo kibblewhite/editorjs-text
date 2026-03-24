@@ -4,34 +4,71 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>editorjs-text</title>
+    <link rel="stylesheet" href="https://unpkg.com/turretcss/dist/turretcss.min.css" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
     <style>
       .editor-container {
-        max-width: 1000px;
-        margin: 0 auto;
         border: thin dashed grey;
         padding: 20px;
+      }
+      main > .container {
+        margin-top: 2rem;
+      }
+      nav, section > button {
+        margin-top: 0.75rem;
+      }
+      nav {
+        display: flex;
+        gap: 0.5rem;
       }
     </style>
   </head>
   <body>
 
-    <div id="editorjs" class="editor-container"></div>
+    <main>
 
-    <br />
+      <div class="container">
+        <section>
+          <h2>Editor 1 — Title (LTR)</h2>
+          <div id="editorjs" class="editor-container"></div>
+          <nav>
+            <button id="load-data-button">Load Data</button>
+          </nav>
+        </section>
+      </div>
 
-    <div id="editorjs2" class="editor-container"></div>
+      <div class="container">
+        <section>
+          <h2>Editor 2 — Text (LTR)</h2>
+          <div id="editorjs2" class="editor-container"></div>
+          <nav>
+            <button id="invoke-insert-button">Invoke Insert</button>
+            <button id="invoke-insert-paragraph-button">Invoke Insert Paragraph</button>
+          </nav>
+        </section>
+      </div>
 
-    <button id="invoke-insert-button">Invoke Insert</button>
-    <button id="invoke-insert-paragraph-button">Invoke Insert Paragraph</button>
-    <button id="save-button">Save</button>
-    <pre id="output"></pre>
+      <div class="container">
+        <section>
+          <h2>Editor 3 — Text (RTL)</h2>
+          <div id="editorjs3" class="editor-container" dir="rtl"></div>
+        </section>
+      </div>
+
+      <div class="container">
+        <section>
+          <button id="save-button">Save</button>
+          <pre id="output"></pre>
+        </section>
+      </div>
+
+    </main>
 
     <script type="text/javascript" src="bundle.js"></script>
     <script>
 
       /**
-       * Initialize the Editor
+       * Initialize Editor 1 — Title (LTR)
        */
       const editor = new EditorJS({
         holder: 'editorjs',
@@ -64,11 +101,11 @@
       });
 
       /**
-       * Initialize the Editor
+       * Initialize Editor 2 — Text (LTR)
        */
        const editor2 = new EditorJS({
         holder: 'editorjs2',
-        autofocus: true,
+        autofocus: false,
         defaultBlock: 'text',
         tools: {
           paragraph: { class: TextElement.DisabledParagraph },
@@ -89,7 +126,91 @@
           blocks: []
         }
       });
-    
+
+      /**
+       * Initialize Editor 3 — Text (RTL)
+       */
+      const editor3 = new EditorJS({
+        holder: 'editorjs3',
+        defaultBlock: 'text',
+        i18n: {
+          direction: 'rtl'
+        },
+        tools: {
+          paragraph: { class: TextElement.DisabledParagraph },
+          text: {
+            class: TextElement,
+            inlineToolbar: true,
+            config: {
+              placeholder: '...',
+              preserveBlank: false,
+              allowEnterKeyDown: false,
+              hidePopoverItem: false,
+              wrapElement: 'text',
+              startMarginZero: false,
+              direction: 'rtl'
+            }
+          }
+        },
+        data: {
+          blocks: []
+        }
+      });
+
+      /**
+       * Sample data simulating a database/API response.
+       * Includes: valid text blocks, an unsupported block type,
+       * a block with missing data, and a malformed block.
+       */
+      const sampleData = {
+        time: 1717207275445,
+        blocks: [
+          {
+            id: 'validText1',
+            type: 'text',
+            data: {
+              text: 'This is a valid text block loaded from a data source'
+            }
+          },
+          {
+            id: 'unsupportedBlock',
+            type: 'header',
+            data: {
+              text: 'This is an unsupported header block',
+              level: 2
+            }
+          },
+          {
+            id: 'validText2',
+            type: 'text',
+            data: {
+              text: 'Another valid text block after the unsupported one'
+            }
+          },
+          {
+            id: 'emptyDataBlock',
+            type: 'text',
+            data: {}
+          },
+          {
+            id: 'unknownType',
+            type: 'checklist',
+            data: {
+              items: [{ text: 'Item 1', checked: true }]
+            }
+          }
+        ],
+        version: '2.29.1'
+      };
+
+      /**
+       * Add handler for the Load Data button
+       */
+      const loadDataButton = document.getElementById('load-data-button');
+      loadDataButton.addEventListener('click', () => {
+        editor.render(sampleData);
+      });
+
       /**
        * Add handler for the Invoke Insert button
        */
@@ -111,7 +232,7 @@
        */
       const saveButton = document.getElementById('save-button');
       const output = document.getElementById('output');
-    
+
       saveButton.addEventListener('click', () => {
         editor.save().then(data => {
 
@@ -131,7 +252,7 @@
         });
       });
 
-      
+
       function encodeHTML(html) {
         let div_element = document.createElement('div');
         let text_node = document.createTextNode(html);
