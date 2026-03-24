@@ -3,7 +3,7 @@
   outline: none;
 }
 
-.ce-text[data-placeholder]:empty::before{
+.ce-text[data-placeholder]:empty::before {
   content: attr(data-placeholder);
   color: #707684;
   font-weight: normal;
@@ -20,14 +20,6 @@
   opacity: 0;
 }
 
-.ce-text p:first-of-type{
-  margin-top: 0;
-}
-
-.ce-text p:last-of-type{
-  margin-bottom: 0;
-}
-
 [contenteditable="true"].ce-text {
   white-space: nowrap;
   overflow: hidden;
@@ -39,7 +31,6 @@
 
 [contenteditable="true"].ce-text * {
   display: inline;
-  white-space: nowrap;
 }
 
 .ce-text.cdx-block {

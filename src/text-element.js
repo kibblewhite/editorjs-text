@@ -2,6 +2,19 @@ import './text-element.css';
 
 import { IconText } from '@codexteam/icons'
 
+/**
+ * No-op paragraph class to cleanly disable the built-in paragraph tool.
+ * Using `paragraph: false` causes a "constructable is not a constructor" warning
+ * because Editor.js's Paste module tries to instantiate every registered tool.
+ * Use this class instead: `paragraph: { class: TextElement.DisabledParagraph }`
+ */
+class DisabledParagraph {
+  static get toolbox() { return null; }
+  static get pasteConfig() { return false; }
+  render() { return document.createElement('div'); }
+  save() { return {}; }
+}
+
 export default class TextElement {
 
   static get DefaultPlaceHolder() {
@@ -20,14 +33,6 @@ export default class TextElement {
     return [ 'text', 'custom', 'title', 'synopsis' ];
   }
 
-  _set_wrap_element(wrap_element) {
-    this._data.wrap = TextElement.SupportedWrapElementsArray.find(item => item === wrap_element) ?? TextElement.DefaultWrapElement;
-  }
-
-  _instantiate_data(data) {
-    this._data = this.normalizeData(data || {});
-  }
-
   constructor({ data, config, api, readOnly }) {
 
     this.api = api;
@@ -41,50 +46,34 @@ export default class TextElement {
     if (!this.readOnly) {
       this.onKeyUp = this.onKeyUp.bind(this);
       this.onKeyDown = this.onKeyDown.bind(this);
+      this.onPasteIntercept = this.onPasteIntercept.bind(this);
     }
 
-    this._placeholder = config.placeholder ? config.placeholder : TextElement.DefaultPlaceHolder;
-    this._data = data ?? {};
+    this._placeholder = config.placeholder || TextElement.DefaultPlaceHolder;
     this._element = null;
-    
-    this._preserveBlank = config.preserveBlank !== undefined ? config.preserveBlank : false;
-    this._allowEnterKeyDown = config.allowEnterKeyDown !== undefined ? config.allowEnterKeyDown : false;
-    this._hidePopoverItem = config.hidePopoverItem !== undefined ? config.hidePopoverItem : false;
-    this._hideToolbar = config.hideToolbar !== undefined ? config.hideToolbar : false;
-    this._startMarginZero = config.startMarginZero !== undefined ? config.startMarginZero : false;
 
-    this._instantiate_data(data);
-    this._set_wrap_element(config.wrapElement);
+    this._preserveBlank = config.preserveBlank ?? false;
+    this._allowEnterKeyDown = config.allowEnterKeyDown ?? false;
+    this._hidePopoverItem = config.hidePopoverItem ?? false;
+    this._hideToolbar = config.hideToolbar ?? false;
+    this._startMarginZero = config.startMarginZero ?? false;
+
+    this._data = this.normalizeData(data || {});
+    this._data.wrap = TextElement.SupportedWrapElementsArray.find(item => item === config.wrapElement) ?? TextElement.DefaultWrapElement;
   }
 
   static get toolbox() {
-    if (this._hidePopoverItem === true) { return [ ]; }
     return {
       icon: IconText,
       title: 'Text'
     };
   }
 
-  _currentWrapElement() {
-    const wrap_element = TextElement.SupportedWrapElementsArray.find(item => item.wrap === this._data.wrap).toString() ?? TextElement.DefaultWrapElement;
-    return wrap_element;
-  }
-
   normalizeData(data) {
-    const text = data && typeof data.text === 'string' ? data.text : '';
-    const wrap = data && data.wrap ? data.wrap : TextElement.DefaultWrapElement;
-
-    // Remove all of the elements with the class `ce-block` except the first/top one from `this.redactor`
-    if (this.redactor) {
-      const blocks = this.redactor.querySelectorAll('.ce-block');
-      if (blocks.length > 1) {
-        for (let i = 1; i < blocks.length; i++) {
-          blocks[i].remove();
-        }
-      }
-    }
-
-    return { text, wrap };
+    return {
+      text: data && typeof data.text === 'string' ? data.text : '',
+      wrap: data && data.wrap ? data.wrap : TextElement.DefaultWrapElement
+    };
   }
 
   onKeyUp(e) {
@@ -92,18 +81,14 @@ export default class TextElement {
       return;
     }
 
-    const { textContent } = this._element;
-
-    if (textContent === '') {
+    if (this._element.textContent === '') {
       this._element.innerHTML = '';
     }
   }
 
   onKeyDown(e) {
-    // console.debug('e.key', e.key, e);
     if (this._allowEnterKeyDown === false && e.key === 'Enter') {
 
-      // Send an event up the chain to notifiy the editor that the Enter key was pressed
       this.api.events.emit('block:enter', {
         element: this._element,
         event: e
@@ -112,24 +97,54 @@ export default class TextElement {
       e.stopPropagation();
       return true;
     }
-
-    // if (e.ctrlKey === true && e.key === 'v') {
-    //   // const clipboard_text = navigator.clipboard.readText();
-    //   // const clipboard_update = clipboard_text.replace(/[\n\r]+/g, '');
-    //   // e.clipboardData.setData('text/plain', clipboard_update);
-    //   // console.log('clipboard_text', clipboard_text, clipboard_update);
-    //   e.stopPropagation();
-    //   e.preventDefault();
-    //   return false;
-    // }
   }
 
-  drawView() {
+  onPasteIntercept(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const text = e.clipboardData.getData('text/plain');
+    const singleLine = text.replace(/[\r\n]+/g, ' ').trim();
+
+    // Prefer execCommand for undo-stack integration and reliable iOS Safari support.
+    // Falls back to Selection/Range API if execCommand is unavailable.
+    // eslint-disable-next-line -- execCommand is deprecated in spec but retained by all browsers;
+    if (!document.execCommand('insertText', false, singleLine)) {
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        const textNode = document.createTextNode(singleLine);
+        range.insertNode(textNode);
+        range.setStartAfter(textNode);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+  }
+
+  _hide_element_on_mutation(selectors) {
+    if (!this.holder || !(this.holder instanceof Node)) {
+      return;
+    }
+
+    var observer = new MutationObserver(() => {
+      let el = this.holder?.querySelector(selectors);
+      if (el && window.getComputedStyle(el).display !== 'none') {
+        el.style.display = 'none';
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(this.holder, { childList: true, subtree: true, attributes: true });
+  }
+
+  render() {
     const div = document.createElement('div');
 
     div.classList.add(this._CSS.wrapper, this._CSS.block);
-
-    div.contentEditable = false;
+    div.contentEditable = !this.readOnly;
     div.dataset.placeholder = this.api.i18n.t(this._placeholder);
 
     if (this._data.text) {
@@ -137,67 +152,38 @@ export default class TextElement {
     }
 
     if (!this.readOnly) {
-      div.contentEditable = true;
       div.addEventListener('keyup', this.onKeyUp);
       div.addEventListener('keydown', this.onKeyDown);
+      div.addEventListener('paste', this.onPasteIntercept);
     }
 
-    return div;
-  }
-
-  _hide_element_on_mutation(selectors) {
-    if (!this.holder || !(this.holder instanceof Node)) {
-      console.debug('Cannot observe mutations: holder is not a valid DOM Node');
-      return;
-    }
-
-    var codex_editor_mutation_observer = new MutationObserver(() => {
-      let tool_element = this.holder?.querySelector(selectors);
-        if (tool_element !== null && typeof tool_element !== 'undefined') {
-          let computed_tool_element_style = window.getComputedStyle(tool_element);
-          if (computed_tool_element_style.display !== 'none') {
-            tool_element.style.display = 'none';
-            codex_editor_mutation_observer.disconnect();
-          }
-        }
-    });
-
-    codex_editor_mutation_observer.observe(this.holder, { childList: true, subtree: true, attributes: true });
-  }
-
-  render() {
-    this._element = this.drawView();
+    this._element = div;
 
     setTimeout(() => {
-      // search up through the parent elements to find a div element with the css class of `codex-editor` assigned to it
       this.holder = this._element.closest('.codex-editor');
       this.redactor = this.holder?.querySelector('.codex-editor__redactor');
 
-      // <div class="ce-popover-item" data-item-name="text" />
-      if (this._hidePopoverItem === true) {
+      if (!this.holder || !this.redactor) {
+        return;
+      }
+
+      if (this._hidePopoverItem) {
         this._hide_element_on_mutation('.ce-popover-item[data-item-name="text"]');
 
-        // Remove all but the first ce-text cdx-block element
-        const text_blocks = this.redactor.querySelectorAll('.ce-text.cdx-block');
-        for (let i = 1; i < text_blocks.length; i++) {
-          // Remove the entire ce-block parent of the text block
-          let block_to_remove = text_blocks[i].closest('.ce-block');
-          if (block_to_remove) {
-            block_to_remove.remove();
-          }
+        const blockCount = this.api.blocks.getBlocksCount();
+        for (let i = blockCount - 1; i > 0; i--) {
+          this.api.blocks.delete(i);
         }
       }
 
-      // <div class="ce-toolbar ce-toolbar--opened" />
-      if (this._hideToolbar === true) {
+      if (this._hideToolbar) {
         this._hide_element_on_mutation('.ce-toolbar');
       }
 
-      if (this._startMarginZero === true) {
+      if (this._startMarginZero) {
         const content_blocks = this.redactor.querySelectorAll('.ce-block__content');
         for (let i = 0; i < content_blocks.length; i++) {
-          let content_block = content_blocks[i];
-          content_block.style.setProperty('max-width', '100%', 'important');
+          content_blocks[i].style.setProperty('max-width', '100%', 'important');
         }
       }
     }, 1);
@@ -205,40 +191,17 @@ export default class TextElement {
     return this._element;
   }
 
-  /**
-   * Method that specified how to merge two Text blocks.
-   * Called by Editor.js by backspace at the beginning of the Block
-   *
-   * @param {TestData} data
-   * @public
-   */
   merge(data) {
-    let merged_data = {
-      text : this._data.text + data.text,
+    this._data = this.normalizeData({
+      text: this._data.text + data.text,
       wrap: this._data.wrap,
-    };
-    this._data = this.normalizeData(merged_data);
+    });
   }
 
-  /**
-   * Validate Test block data:
-   * - check for emptiness
-   *
-   * @param {TestData} savedData — data received after saving
-   * @returns {boolean} false if saved data is not correct, otherwise true
-   * @public
-   */
   validate(savedData) {
     return !(savedData.text.trim() === '' && !this._preserveBlank);
   }
 
-  /**
-   * Extract Tool's data from the view
-   *
-   * @param {HTMLDivElement} toolsContent - Test tools rendered view
-   * @returns {TestData} - saved data
-   * @public
-   */
   save(toolsContent) {
     return {
       text: toolsContent.innerHTML,
@@ -246,31 +209,6 @@ export default class TextElement {
     };
   }
 
-  /**
-   * On paste callback fired from Editor.
-   *
-   * @param {PasteEvent} event - event with pasted data
-   */
-  onPaste(event) {
-    const data = {
-      text: event.detail.data.innerHTML
-    };
-    this._data = this.normalizeData(data);
-  }
-
-  /**
-   * Enable Conversion Toolbar. Test can be converted to/from other tools
-   */
-  // static get conversionConfig() {
-  //   return {
-  //     export: 'text', // to convert Test to other block, use 'text' property of saved data
-  //     import: 'text', // to covert other block's exported string to Test, fill 'text' property of tool data
-  //   };
-  // }
-
-  /**
-   * Sanitizer rules
-   */
   static get sanitize() {
     return {
       text: {
@@ -279,38 +217,17 @@ export default class TextElement {
     };
   }
 
-  /**
-   * Returns true to notify the core that read-only mode is supported
-   *
-   * @returns {boolean}
-   */
   static get isReadOnlySupported() {
     return true;
   }
 
-  /**
-   * Get current Tools`s data
-   *
-   * @returns {TestData} Current data
-   * @private
-   */
   get data() {
-    if (this._element !== null && typeof this._element !== 'undefined') {
-      const text = this._element.innerHTML;
-      this._data.text = text;
+    if (this._element) {
+      this._data.text = this._element.innerHTML;
     }
-    this._data.wrap = this._currentWrapElement();
     return this.normalizeData(this._data);
   }
 
-  /**
-   * Store data in plugin:
-   * - at the this.data property
-   * - at the HTML
-   *
-   * @param {TestData} data — data to set
-   * @private
-   */
   set data(data) {
     this._data = this.normalizeData(data);
     if (this._element !== null) {
@@ -318,34 +235,17 @@ export default class TextElement {
     }
   }
 
-  /**
-   * Fill tool's view with data
-   */
   hydrate() {
     window.requestAnimationFrame(() => {
       this._element.innerHTML = this._data.text || '';
     });
   }
 
-  /**
-   * Used by Editor paste handling API.
-   * Provides configuration to handle P tags.
-   *
-   * @returns {{tags: string[]}}
-   */
-  static get pasteConfig() {
-    return {
-      tags: [ 'p' ]
-    };
-  }
-
-  /**
-   * Allow pressing "shift+" Enter inside the text block
-   *
-   * @returns {boolean}
-   * @public
-   */
   static get enableLineBreaks() {
     return false;
+  }
+
+  static get DisabledParagraph() {
+    return DisabledParagraph;
   }
 }

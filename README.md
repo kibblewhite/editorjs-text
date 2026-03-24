@@ -1,183 +1,209 @@
 # editorjs-text
 
-A plain text-element block for editorjs. You can capture the enter key to prevent new lines or line breaks from been created.
+A single-line plain text block tool for [Editor.js](https://editorjs.io/). Designed as a drop-in replacement for the default paragraph tool when you need constrained, single-line text inputs — title fields, label inputs, or form-like UIs built inside an Editor.js instance.
 
-## NPM and Build
+- Enforces single-line input (Enter key is captured, line breaks are stripped)
+- Multi-line paste is automatically condensed into a single line
+- Emits a `block:enter` event when Enter is pressed, so your app can handle it
+- Can hide the toolbar and popover for a minimal, input-field experience
+- Supports read-only mode
 
-```
-npm install vite@latest
-npm install @codexteam/icons@latest
-npm install vite-plugin-css-injected-by-js --save-dev
-```
+## Installation
 
-```
-npm install
-npm update
-```
+### NPM
 
-Build the distribution.
-
-```
-npm run build
+```bash
+npm install editorjs-text
 ```
 
-Open `dist\index.html` in a local browser.
+### CDN
 
-## Usage
+```html
+<script src="https://cdn.jsdelivr.net/npm/editorjs-text/dist/bundle.js"></script>
+```
 
-Add a new Tool to the `tools` property of the CodeX Editor initial config.
+## Quick Start
+
+### ESM
 
 ```javascript
-var editor = CodexEditor({
-  ...
-  
-  tools: {
-    ...
-    textElement: TextElement,
-  },
-  onReady: () => {
-    editor.events.on('block:enter', (eventData) => {
-      console.log('Event captured:', eventData);
-    });
-  }
+import TextElement from 'editorjs-text';
 
-  ...
+const editor = new EditorJS({
+  holder: 'editorjs',
+  defaultBlock: 'text',
+  tools: {
+    paragraph: { class: TextElement.DisabledParagraph },
+    text: {
+      class: TextElement,
+      inlineToolbar: true,
+      config: {
+        placeholder: 'Type here...',
+      }
+    }
+  }
 });
 ```
 
-Or init Warning Tool with additional settings
+### CDN / IIFE
 
-```javascript
-var editor = CodexEditor({
-  ...
-  
-  tools: {
-    ...
-    textElement: {
+```html
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/editorjs-text/dist/bundle.js"></script>
+<script>
+  const editor = new EditorJS({
+    holder: 'editorjs',
+    defaultBlock: 'text',
+    tools: {
+      paragraph: { class: TextElement.DisabledParagraph },
+      text: {
         class: TextElement,
         inlineToolbar: true,
         config: {
-            placeholder: '...',
-            preserveBlank: false,
-            allowEnterKeyDown: false,
-            hidePopoverItem: true,
-            hideToolbar: true,
-            startMarginZero: true
+          placeholder: 'Type here...',
         }
-    },
+      }
+    }
+  });
+</script>
+```
+
+## Disabling the Built-in Paragraph Tool
+
+When using `TextElement` as the default block, you should disable the built-in paragraph tool. The common workaround `paragraph: false` causes a console warning:
+
+```
+Paste handling for «paragraph» Tool hasn't been set up because of the error
+TypeError: this.constructable is not a constructor
+```
+
+This happens because Editor.js's Paste module tries to instantiate every registered tool, and `false` is not a constructor.
+
+This plugin includes `TextElement.DisabledParagraph` — a no-op class that satisfies the Block Tool API without rendering anything or handling paste events:
+
+```javascript
+paragraph: { class: TextElement.DisabledParagraph }
+```
+
+## Configuration
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `placeholder` | `string` | `''` | Placeholder text shown when the editor is empty |
+| `preserveBlank` | `boolean` | `false` | Keep blank entries when saving editor data |
+| `allowEnterKeyDown` | `boolean` | `false` | Allow the Enter key to pass through to Editor.js. When `false`, Enter is captured and a `block:enter` event is emitted instead |
+| `hidePopoverItem` | `boolean` | `false` | Hide the "Text" item from the block toolbox popover |
+| `hideToolbar` | `boolean` | `false` | Hide the Editor.js toolbar entirely (affects all tools in that editor instance) |
+| `startMarginZero` | `boolean` | `false` | Remove the default max-width constraint so the input spans its full container |
+| `wrapElement` | `string` | `'text'` | Semantic metadata stored with the block data. Supported values: `text`, `custom`, `title`, `synopsis` |
+
+### Full Configuration Example
+
+```javascript
+const editor = new EditorJS({
+  holder: 'editorjs',
+  defaultBlock: 'text',
+  tools: {
+    paragraph: { class: TextElement.DisabledParagraph },
+    text: {
+      class: TextElement,
+      inlineToolbar: true,
+      config: {
+        placeholder: 'Enter a title...',
+        preserveBlank: false,
+        allowEnterKeyDown: false,
+        hidePopoverItem: true,
+        hideToolbar: true,
+        startMarginZero: true,
+        wrapElement: 'title'
+      }
+    }
   },
-  
-  ...
+  onReady: () => {
+    editor.events.on('block:enter', (eventData) => {
+      console.log('Enter pressed:', eventData);
+    });
+  }
 });
 ```
-#### Include as JS
 
+## Events
+
+### `block:enter`
+
+Emitted when the Enter key is pressed and `allowEnterKeyDown` is `false` (the default). The event data contains:
+
+| Field | Type | Description |
+|---|---|---|
+| `element` | `HTMLDivElement` | The contentEditable element |
+| `event` | `KeyboardEvent` | The original keyboard event |
+
+```javascript
+editor.events.on('block:enter', ({ element, event }) => {
+  // Handle enter key — e.g., submit a form, move focus
+});
 ```
-https://cdn.jsdelivr.net/npm/editorjs-text/dist/bundle.min.js
-```
 
-## Config Params
-
-| Field              | Type      | Description                       |
-| ------------------ | --------- | ----------------------------------|
-| placeholder        | `string`  | The placeholder. Will be shown only in the first text entry when the editor is empty.  |
-| preserveBlank      | `boolean` | (default: `false`) Whether or not to keep blank paragraphs when saving editor data |
-| allowEnterKeyDown  | `boolean` | (default: `false`) Whether or not to capture when the enter key or shift+enter key is pressed |
-| hidePopoverItem    | `boolean` | (default: `false`) Whether or not to display the toolbar's text popover item within the edit toolbox (remember there is a difference between the toolbar and toolbox) |
-| hideToolbar        | `boolean` | (default: `false`) Whether or not to display the text toolbar (note: this will affect all other toolbar items in that editor) |
-| startMarginZero    | `boolean` | (default: `false`) The input text field is allowed to use the whole width available to within its parent element |
-
-## Output data
-
-| Field  | Type     | Description      |
-| ------ | -------- | ---------------- |
-| text   | `string` | html text output without line breaks or new lines |
-
+## Output Data
 
 ```json
 {
-    "type" : "text",
-    "data" : {
-        "text" : "Check out our projects on a <a href=\"https://github.com/codex-team\">GitHub page</a>.",
-    }
+  "type": "text",
+  "data": {
+    "text": "Check out our projects on a <a href=\"https://github.com/codex-team\">GitHub page</a>.",
+    "wrap": "text"
+  }
 }
 ```
 
-## Issues
+| Field | Type | Description |
+|---|---|---|
+| `text` | `string` | HTML text content (single line, no line breaks) |
+| `wrap` | `string` | Semantic wrap element type (`text`, `custom`, `title`, or `synopsis`) |
 
-### Vite
+## Paste Handling
 
-If you get this during the `npm run build`:
+Multi-line content pasted into the editor is automatically condensed into a single line. Newlines and carriage returns are replaced with spaces. This prevents Editor.js from splitting pasted content into multiple blocks.
 
-```
-'vite' is not recognized as an internal or external command, operable program or batch file.
-```
+## Development
 
-Please ensure you have performed the npm install commands earlier in this document.
+Requires Node.js `^20.19.0` or `>=22.12.0`.
 
----
-
-```
-file://.../editorjs-text/node_modules/vite/bin/vite.js:7
-    await import('source-map-support').then((r) => r.default.install())
-    ^^^^^
-
-SyntaxError: Unexpected reserved word
-    at Loader.moduleStrategy (internal/modules/esm/translators.js:133:18)
-    at async link (internal/modules/esm/module_job.js:42:21)
+```bash
+npm install
+npm run build
 ```
 
-During the npm install, you may have an older version of node/npm/nvm.
+The build outputs to `dist/` in four formats:
 
-Please go through the update process successfully and then try again.
+| Format | File | Usage |
+|---|---|---|
+| IIFE | `bundle.js` | `<script>` tags, CDN |
+| ESM | `text-element.mjs` | `import` |
+| CJS | `text-element.cjs` | `require()` |
+| UMD | `text-element.umd.js` | Universal |
 
-### Update node and npm where required
+To test locally, open `dist/index.html` directly in a browser from the filesystem.
 
-```$ npm install vite@latest
-npm WARN EBADENGINE Unsupported engine {
-npm WARN EBADENGINE   package: 'vite@7.0.0',
-npm WARN EBADENGINE   required: { node: '^20.19.0 || >=22.12.0' },
-npm WARN EBADENGINE   current: { node: 'v18.19.1', npm: '9.2.0' }
-npm WARN EBADENGINE }
-```
+## Troubleshooting
 
-As both root and standard user to install nvm into the local home directory
-```
+### `'vite' is not recognized` during build
+
+Run `npm install` first to install dependencies.
+
+### `SyntaxError: Unexpected reserved word` from Vite
+
+Your Node.js version is too old. Update via [nvm](https://github.com/nvm-sh/nvm):
+
+```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-```
-
-Logout and back in, to get the correct settings and to beable to start using `nvm`.
-```
 nvm install --lts
 ```
 
-Re-run the vite install:
-```
-npm install vite@latest
-```
+### `ERR_FILE_NOT_FOUND` or `Cannot set properties of undefined (setting 'focused')`
 
-### Console Errors in the Browser
+You are opening the wrong HTML file. Open `dist/index.html`, not `public/index.html`. If it doesn't exist, run `npm run build` first.
 
-```
-Failed to load resource: net::ERR_FILE_NOT_FOUND
-```
+## License
 
-Or
-
-```
-Editor.js is not ready because of TypeError: Cannot set properties of undefined (setting 'focused')
-```
-
-Means you are running the wrong `index.html` please open the correct `dist\index.html` into your local browser from the local file system.
-
-If the `dist\index.html` file is missing, you need to run the `npm run build` command in order to build the html.
-
-### Known Issue
-
-[https://github.com/codex-team/editor.js/discussions/1897#discussioncomment-5503544](https://github.com/codex-team/editor.js/discussions/1897#discussioncomment-5503544)
-
-```
-Paste handling for «paragraph» Tool hasn't been set up because of the error TypeError: this.constructable is not a constructor
-```
-
-Possible solution is to create a blank plug-in that can be used as drop-in replacement for the paragraph plug-in.
+[MIT](LICENSE)
