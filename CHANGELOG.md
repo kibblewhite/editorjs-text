@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 (2026-03-24)
+
+- Fix `repository.url` format in `package.json` (npm publish warning)
+- Version bump from 1.0.1 (which published successfully despite a misleading CI error)
+
 ## 1.0.1 (2026-03-24)
 
 First stable release. Major refactor, bug fixes, and modernised build tooling.
