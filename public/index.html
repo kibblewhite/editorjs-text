@@ -4,27 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>editorjs-text</title>
-    <link rel="stylesheet" href="https://unpkg.com/turretcss/dist/turretcss.min.css" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
     <style>
-      .editor-container {
+      #editorjs, #editorjs2, #editorjs3 {
         border: thin dashed grey;
-        padding: 20px;
-      }
-      main > .container {
-        margin-top: 2rem;
-      }
-      nav, section > button {
-        margin-top: 0.75rem;
+        border-radius: 6px;
+        padding-inline: 10px;
       }
       nav {
-        display: flex;
-        gap: 0.5rem;
-      }
-      .codex-editor button svg {
-        width: auto;
-        height: auto;
-        fill: none;
+        margin-top: 0.5rem;
       }
     </style>
   </head>
@@ -32,20 +20,20 @@
 
     <main>
 
-      <div class="container">
+      <div>
         <section>
           <h2>Editor 1 — Title (LTR)</h2>
-          <div id="editorjs" class="editor-container"></div>
+          <div id="editorjs"></div>
           <nav>
             <button id="load-data-button">Load Data</button>
           </nav>
         </section>
       </div>
 
-      <div class="container">
+      <div>
         <section>
           <h2>Editor 2 — Text (LTR)</h2>
-          <div id="editorjs2" class="editor-container"></div>
+          <div id="editorjs2"></div>
           <nav>
             <button id="invoke-insert-button">Invoke Insert</button>
             <button id="invoke-insert-paragraph-button">Invoke Insert Paragraph</button>
@@ -53,16 +41,18 @@
         </section>
       </div>
 
-      <div class="container">
+      <div>
         <section>
           <h2>Editor 3 — Text (RTL)</h2>
-          <div id="editorjs3" class="editor-container" dir="rtl"></div>
+          <div id="editorjs3" dir="rtl"></div>
         </section>
       </div>
 
-      <div class="container">
+      <div>
         <section>
-          <button id="save-button">Save</button>
+          <nav>
+           <button id="save-button">Save</button>
+          </nav>
           <pre id="output"></pre>
         </section>
       </div>
@@ -78,6 +68,7 @@
       const editor = new EditorJS({
         holder: 'editorjs',
         autofocus: true,
+        minHeight: 0,
         defaultBlock: 'text',
         tools: {
           paragraph: { class: TextElement.DisabledParagraph },
