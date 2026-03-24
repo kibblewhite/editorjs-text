@@ -8,6 +8,10 @@ A single-line plain text block tool for [Editor.js](https://editorjs.io/). Desig
 - Can hide the toolbar and popover for a minimal, input-field experience
 - Supports read-only mode
 
+## Demo
+
+Try the live demo: [https://kibblewhite.github.io/editorjs-text/](https://kibblewhite.github.io/editorjs-text/)
+
 ## Installation
 
 ### NPM
